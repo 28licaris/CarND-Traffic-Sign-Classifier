@@ -2,8 +2,6 @@
 
 ## Writeup
 
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
 ---
 
 **Build a Traffic Sign Recognition Project**
@@ -19,24 +17,24 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[image1]: ./writeup_images/Dataset_Visualization.jpg "Dataset Visualization"
+[image2]: ./writeup_images/example_images.png "Example Signs"
+[image3]: ./writeup_images/original_image.jpg "Original Sign"
+[image4]: ./writeup_images/augmented_image.jpg "Augmented Sign"
+[image5]: ./writeup_images/preprocessed_image.jpg "Preprocessed Sign"
+[image6]: ./test_examples/11_rigtoffway_atnextintersection_32x32x3.jpg
+[image7]: ./test_examples/12_priority_road_32x32x3.jpg
+[image8]: ./test_examples/13_yield.jpg
+[image9]: ./test_examples/17_noentry_32x32x3.jpg
+[image10]: ./test_examples/31_wildanimalscrossing_32x32x3.jpg
+[image11]: ./test_examples/34_turn_left_ahead.jpg
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-### Writeup / README
 
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
-
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
+Here is a link to my [project code](https://github.com/28licaris/CarND-Traffic-Sign-Classifier/blob/master/Traffic_Sign_Classifier.ipynb)
 
 ### Data Set Summary & Exploration
 
@@ -45,55 +43,72 @@ You're reading it! and here is a link to my [project code](https://github.com/ud
 I used the pandas library to calculate summary statistics of the traffic
 signs data set:
 
-* The size of training set is ?
-* The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+* The size of training set is 34799
+* The size of the validation set is 4410
+* The size of test set is 12630
+* The shape of a traffic sign image is 32x32x3
+* The number of unique classes/labels in the data set is 43
 
 #### 2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+Here is an exploratory visualization of the data set. It is a bar chart showing how the data data is distributed for each sign class.
 
 ![alt text][image1]
+![alt text][image2]
 
 ### Design and Test a Model Architecture
 
 #### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
-As a first step, I decided to convert the images to grayscale because ...
+As a first step, I decided to augment my dataset to create more data for each sign class.Image augmentation is an important pre-processing step which helps expose the neural network to a wide variety of variations without having to collect and label more training data. My image augmentation functions are implemented in cell 5 and consist of the following techniques.
 
-Here is an example of a traffic sign image before and after grayscaling.
+* 1. Rotation: +/- 10 degrees
+* 2. Blur: kernel will be randomly chosen by random(0,1)
+* 3. Shear: shear angle random -0.2 to 0.2
+* 4. Translate: x, y +/- 2 pixels
+* 5. Gamma Correction adjustment: 0.5 - 1.5
 
-![alt text][image2]
+To augment the dataset I pick a random combination from 32 possible combinations. Ex: (1, 2, 3), (1, 2)
+This chooses which functions to use for augmenting an image. Each function then randomly selects its
+parameter. For example if the combo (1, 4) is selected. The current image will be augmented
+by rotating the image randomly between -10 and 10 degrees. The image will then be agumented by translating
+the image in the x and y direction randomly between -2 and +2 pixels. I use a threshold of 2000 images per sign
+class. So the augment_dataset() function will loop through every image in every sign class and create an augmented image until all sign classes have 2000 images for training.
 
-As a last step, I normalized the image data because ...
-
-I decided to generate additional data because ... 
-
-To add more data to the the data set, I used the following techniques because ... 
-
-Here is an example of an original image and an augmented image:
-
+Here is an example of an image before and after augmentation.
 ![alt text][image3]
+![alt text][image4]
 
-The difference between the original data set and the augmented data set is the following ... 
+After augmenting the dataset I applied a preprocessing funciton which can be found in cell 4.
+This function converts the image to grayscale and then normalizes the image between [-1, 1].
+This ensures that each pixel input into the neural network has a similar distribution. This
+helps the model converge faster when training.
 
-
+Here is an example of a traffic sign image after preprocessing.
+![alt text][image5]
+ 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
 My final model consisted of the following layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
+| Input         		| 32x32x1 grayscale image 						| 
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 28x28x6 	|
 | RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
+| Max pooling	      	| 2x2 stride,  outputs 14x14x6 				    |
+| Convolution 5x5	    | 1x1 stride, valid padding, outputs 10x10x16	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride,  outputs 5x5x16 				    |
+| Flatten				| output = 400        							|
+| Fully connected		| output = 120        							|
+| RELU					|												|
+| Dropout				|											    |
+| Fully Connected		| output = 84        							|        
+| RELU					|												|
+| Dropout				|											    |
+| Fully Connected		| output = 43                                   |
+| Softmax				|												|
 |						|												|
  
 
@@ -126,12 +141,11 @@ If a well known architecture was chosen:
 
 #### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
-Here are five German traffic signs that I found on the web:
+Here are six German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][image6] ![alt text][image7] ![alt text][image8] 
+![alt text][image9] ![alt text][image10] ![alt text][image11]
 
-The first image might be difficult to classify because ...
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
