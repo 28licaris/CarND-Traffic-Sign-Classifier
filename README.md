@@ -30,7 +30,7 @@ The goals / steps of this project are the following:
 [image11]: ./test_examples/34_turn_left_ahead.jpg
 [image12]: ./writeup_images/augmented_dataset.png
 [image13]: ./writeup_images/softmax_probabillities.png
-[image14]: ./writeup_images/mod_lenet_relu_augmentation.png
+[image14]: ./writeup_images/mod2_lenet_relu_augmentation.png
 
 
 ## Rubric Points
