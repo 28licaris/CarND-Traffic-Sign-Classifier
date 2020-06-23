@@ -30,7 +30,7 @@ The goals / steps of this project are the following:
 [image11]: ./test_examples/34_turn_left_ahead.jpg
 [image12]: ./writeup_images/augmented_dataset.png
 [image13]: ./writeup_images/softmax_probabillities.png
-[image14]: ./writeup_images/mod_lenet_relu_augmentation.png
+[image14]: ./writeup_images/mod2_lenet_relu_augmentation.png
 
 
 ## Rubric Points
@@ -208,6 +208,8 @@ Here are six German traffic signs that I found on the web:
 
 ![alt text][image6] ![alt text][image7] ![alt text][image8] 
 ![alt text][image9] ![alt text][image10] ![alt text][image11]
+
+These images I found have the same shape as the original training set and the resolution looks about the same. I would expecte the classifier to be able to classify these images pretty well. The model has been trained on all these sign classes and have seen a variation of these images because of image augmentation. The priority road, right of way at intersection, and wild animal crossing does not have a real world background like the other signs or the signs in the training set. I still think the model will be able to classify most of these. Overall I think these images are very similar quality to the training set so the model should be able to predict most of these sign classes without a problem.
 
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
